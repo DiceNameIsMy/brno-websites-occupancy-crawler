@@ -16,7 +16,7 @@ pip-delete-this-directory.txt
 
 # Project specific
 cron.log
-data/occupancy.csv
+data/*
 
 # IDEs
 .vscode/

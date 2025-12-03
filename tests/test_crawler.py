@@ -1,64 +1,61 @@
-import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import re
+import unittest
+from unittest.mock import MagicMock, patch
+from src.crawlers.luzanky import LuzankyCrawler
+from src.crawlers.hangar import HangarCrawler
 
 
-@pytest.fixture
-def driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-    yield driver
-    driver.quit()
+class TestLuzankyCrawler(unittest.TestCase):
+    @patch("src.crawlers.base.webdriver.Chrome")
+    def test_fetch_occupancy_success(self, mock_driver_cls):
+        # Mock the driver and elements
+        mock_driver = mock_driver_cls.return_value
+
+        # Mock finding elements
+        mock_element = MagicMock()
+        mock_element.text = "BAZÉNY"
+
+        mock_time_span = MagicMock()
+        mock_time_span.text = "10/50"
+
+        mock_element.find_element.return_value = mock_time_span
+        mock_driver.find_elements.return_value = [mock_element]
+
+        crawler = LuzankyCrawler()
+        result = crawler.fetch_data(mock_driver)
+
+        self.assertEqual(result, "10/50")
+
+    @patch("src.crawlers.base.webdriver.Chrome")
+    def test_fetch_occupancy_no_data(self, mock_driver_cls):
+        mock_driver = mock_driver_cls.return_value
+        mock_driver.find_elements.return_value = []
+
+        crawler = LuzankyCrawler()
+        result = crawler.fetch_data(mock_driver)
+
+        self.assertIsNone(result)
 
 
-def test_fetch_pool_occupancy(driver):
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
+class TestHangarCrawler(unittest.TestCase):
+    @patch("src.crawlers.base.webdriver.Chrome")
+    def test_fetch_occupancy_success(self, mock_driver_cls):
+        mock_driver = mock_driver_cls.return_value
 
-    url = "https://bazenyluzanky.starez.cz/"
-    driver.get(url)
+        # Mock finding the label element
+        mock_label = MagicMock()
 
-    # Wait for the element to be present
-    wait = WebDriverWait(driver, 10)
-    wait.until(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "#info-ticket-collapse .col.area.person")
-        )
-    )
+        # Mock parent element
+        mock_parent = MagicMock()
+        mock_parent.text = "Current occupancy Open! Plenty of space..."
 
-    # Logic to find the element:
-    # Find all divs with class 'col area person'
-    # Check which one contains "BAZÉNY"
-    # Get the span with class 'time' inside it
+        mock_label.find_element.return_value = mock_parent
+        mock_driver.find_element.return_value = mock_label
 
-    elements = driver.find_elements(
-        By.CSS_SELECTOR, "#info-ticket-collapse .col.area.person"
-    )
-    occupancy_text = None
+        crawler = HangarCrawler()
+        result = crawler.fetch_data(mock_driver)
 
-    for el in elements:
-        # Use get_attribute("textContent") to get text including hidden
-        # if any, though .text should work if visible.
-        if "BAZÉNY" in el.text:
-            try:
-                time_span = el.find_element(By.CSS_SELECTOR, "span.time")
-                occupancy_text = time_span.text
-                break
-            except Exception:
-                continue
+        self.assertEqual(result, "Open! Plenty of space...")
 
-    assert occupancy_text is not None, "Could not find occupancy text for BAZÉNY"
-    print(f"Found occupancy: {occupancy_text}")
 
-    # Verify format "number/number"
-    assert re.match(r"^\d+/\d+$", occupancy_text), (
-        f"Occupancy text '{occupancy_text}' " "does not match format 'number/number'"
-    )
+if __name__ == "__main__":
+    unittest.main()

@@ -1,6 +1,10 @@
-# Pool Occupancy Crawler
+# Pool & Gym Occupancy Crawler
 
-This project is a Python-based crawler that fetches the current number of people in the "Bazény Lužánky" pool from [bazenyluzanky.starez.cz](https://bazenyluzanky.starez.cz/) and logs the data to a CSV file.
+This project is a Python-based crawler that fetches occupancy data from multiple sources:
+1.  **Bazény Lužánky** (Pool): Fetches the number of people from [bazenyluzanky.starez.cz](https://bazenyluzanky.starez.cz/).
+2.  **Hangar Brno** (Climbing Gym): Fetches the occupancy status (e.g., "Open!", "Busy!") from [hangarbrno.cz](https://hangarbrno.cz/en/home/).
+
+Data is logged to separate CSV files in the `data/` directory.
 
 ## Prerequisites
 
@@ -13,12 +17,12 @@ This project is a Python-based crawler that fetches the current number of people
 
 2.  **Create a virtual environment:**
     ```bash
-    python -m venv venv
+    python3 -m venv .venv
     ```
 
 3.  **Activate the virtual environment:**
     ```bash
-    source venv/bin/activate
+    source .venv/bin/activate
     ```
 
 4.  **Install dependencies:**
@@ -28,14 +32,25 @@ This project is a Python-based crawler that fetches the current number of people
 
 ## Usage
 
-To run the crawler manually:
+To run the crawler manually, use the `src/main.py` script. You can specify which source to crawl.
 
+### Run for all sources (default)
 ```bash
-# Ensure the virtual environment is activated or use the full path
-venv/bin/python src/crawler.py
+python src/main.py --source all
 ```
 
-The data will be appended to `data/occupancy.csv` with a timestamp.
+### Run for a specific source
+```bash
+# Only Luzanky Pool
+python src/main.py --source luzanky
+
+# Only Hangar Brno
+python src/main.py --source hangar
+```
+
+### Output
+- **Luzanky**: Data is appended to `data/luzanky.csv` (Timestamp, Occupancy Number).
+- **Hangar**: Data is appended to `data/hangar.csv` (Timestamp, Occupancy Status).
 
 ## Scheduling with Cron
 
@@ -46,25 +61,19 @@ You can automate the crawler using `cron` on Linux.
     crontab -e
     ```
 
-2.  Add a line to schedule the job. Replace `/path/to/project` with the absolute path to your project directory (e.g., `/home/nur/Projects/ims-crawler`).
+2.  Add a line to schedule the job. Replace `/path/to/project` with the absolute path to your project directory.
 
     **Run every 1 hour (at minute 0):**
     ```cron
-    0 * * * * cd /path/to/project && venv/bin/python src/crawler.py >> cron.log 2>&1
+    0 * * * * cd /path/to/project && .venv/bin/python src/main.py --source all >> cron.log 2>&1
     ```
 
     **Run every 10 minutes:**
     ```cron
-    */10 * * * * cd /path/to/project && venv/bin/python src/crawler.py >> cron.log 2>&1
+    */10 * * * * cd /path/to/project && .venv/bin/python src/main.py --source all >> cron.log 2>&1
     ```
-    *Note: `*/10` means it runs at every 10th minute of the hour (e.g., 14:00, 14:10, 14:20), not 10 minutes from when you save the file.*
 
 3.  Save and exit.
-
-### Explanation of Cron Command
-- `cd /path/to/project`: Changes directory to the project root so relative paths work.
-- `venv/bin/python`: Uses the Python interpreter from the virtual environment.
-- `>> cron.log 2>&1`: Redirects both standard output and error to `cron.log` for debugging.
 
 ## Note
 
