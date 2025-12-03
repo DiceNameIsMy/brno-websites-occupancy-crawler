@@ -57,6 +57,7 @@ You can automate the crawler using `cron` on Linux.
     ```cron
     */10 * * * * cd /path/to/project && venv/bin/python src/crawler.py >> cron.log 2>&1
     ```
+    *Note: `*/10` means it runs at every 10th minute of the hour (e.g., 14:00, 14:10, 14:20), not 10 minutes from when you save the file.*
 
 3.  Save and exit.
 
