@@ -64,3 +64,7 @@ You can automate the crawler using `cron` on Linux.
 - `cd /path/to/project`: Changes directory to the project root so relative paths work.
 - `venv/bin/python`: Uses the Python interpreter from the virtual environment.
 - `>> cron.log 2>&1`: Redirects both standard output and error to `cron.log` for debugging.
+
+## Note
+
+This project was vibecoded using **Antigravity**. It was easy to do, and I will definitely keep using LLMs for making small tools like this.
