@@ -52,6 +52,22 @@ python src/main.py --source hangar
 - **Luzanky**: Data is appended to `data/luzanky.csv` (Timestamp, Occupancy Number).
 - **Hangar**: Data is appended to `data/hangar.csv` (Timestamp, Occupancy Status).
 
+## Visualization and Analysis
+
+You can visualize the collected crowd data for **Hangar Brno** using the included script.
+
+```bash
+python3 visualize_hangar_crowd.py --file data/hangar.csv
+```
+
+This will:
+1.  Generate **`hangar_plots.png`** containing:
+    -   A time-series plot of crowd levels.
+    -   Average occupancy by hour of the day.
+    -   Average occupancy by day of the week.
+2.  Print a summary analysis to the console, including optimal visiting times.
+
+
 ## Scheduling with Cron
 
 You can automate the crawler using `cron` on Linux.
