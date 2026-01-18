@@ -12,12 +12,12 @@ class TestLuzankyCrawler(unittest.TestCase):
 
         # Mock finding elements
         mock_element = MagicMock()
-        mock_element.text = "BAZÉNY"
+        mock_element.text = "BAZÉNY\n10/50"
 
-        mock_time_span = MagicMock()
-        mock_time_span.text = "10/50"
+        mock_value_el = MagicMock()
+        mock_value_el.text = "10/50"
 
-        mock_element.find_element.return_value = mock_time_span
+        mock_element.find_element.return_value = mock_value_el
         mock_driver.find_elements.return_value = [mock_element]
 
         crawler = LuzankyCrawler()

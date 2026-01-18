@@ -18,21 +18,15 @@ class LuzankyCrawler(BaseCrawler):
 
         # Wait for the element
         wait = WebDriverWait(driver, 20)
-        wait.until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#info-ticket-collapse .col.area.person")
-            )
-        )
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".info1 .box")))
 
-        elements = driver.find_elements(
-            By.CSS_SELECTOR, "#info-ticket-collapse .col.area.person"
-        )
+        elements = driver.find_elements(By.CSS_SELECTOR, ".info1 .box")
 
         for el in elements:
-            if "BAZÉNY" in el.text:
+            if "BAZÉNY" in el.text.upper():
                 try:
-                    time_span = el.find_element(By.CSS_SELECTOR, "span.time")
-                    return time_span.text
+                    value_el = el.find_element(By.TAG_NAME, "h5")
+                    return value_el.text.strip()
                 except Exception as e:
                     print(f"[{self.source_name}] Error extracting text: {e}")
                     continue

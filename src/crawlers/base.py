@@ -10,19 +10,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 class BaseCrawler(abc.ABC):
     def __init__(self, data_dir="data"):
         self.data_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ),
             data_dir,
         )
         self.csv_file = os.path.join(self.data_dir, f"{self.source_name}.csv")
 
     @property
     @abc.abstractmethod
-    def source_name(self):
+    def source_name(self) -> str:
         pass
 
     @property
     @abc.abstractmethod
-    def url(self):
+    def url(self) -> str:
         pass
 
     def setup_driver(self):
