@@ -54,8 +54,9 @@ python src/main.py --source hangar
 
 ## Visualization and Analysis
 
-You can visualize the collected crowd data for **Hangar Brno** using the included script.
+You can visualize the collected crowd data using the included scripts.
 
+### Hangar Brno
 ```bash
 python3 visualize_hangar_crowd.py --file data/hangar.csv
 ```
@@ -63,9 +64,24 @@ python3 visualize_hangar_crowd.py --file data/hangar.csv
 This will:
 1.  Generate **`hangar_plots.png`** containing:
     -   A time-series plot of crowd levels.
-    -   Average occupancy by hour of the day.
-    -   Average occupancy by day of the week.
-2.  Print a summary analysis to the console, including optimal visiting times.
+    -   Data availability counts per day.
+    -   Average occupancy heatmap (Day vs Hour).
+2.  Print a summary analysis to the console.
+
+![Hangar Occupancy](hangar_plots.png)
+
+### Luzanky Pool
+```bash
+python3 visualize_luzanky_crowd.py --file data/luzanky.csv
+```
+
+This will:
+1.  Generate **`luzanky_plots.png`** containing:
+    -   Pool utilization over time.
+    -   Average crowdedness heatmap (Day vs Hour).
+2.  Print a summary analysis to the console.
+
+![Luzanky Occupancy](luzanky_plots.png)
 
 
 ## Scheduling with Cron
